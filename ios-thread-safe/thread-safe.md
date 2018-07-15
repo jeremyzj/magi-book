@@ -7,7 +7,7 @@
 
 在设置图片这个例子中，症结其实是你的改变通常要过一会儿才能生效。但是如果有两个线程在同时对图片进行了设定，那么很可能因为当前的图片被释放两次，而导致应用崩溃。这种行为是和时机有关系的，所以很可能在开发阶段没有崩溃，但是你的用户使用时却不断 crash。
 
-现在没有官方的用来寻找类似错误的工具，但我们确实有一些技巧来避免这个问题。[UIKit Main Thread Guard](https://gist.github.com/steipete/5664345) 是一段用来监视每一次对 setNeedsLayout 和 setNeedsDisplay 的调用代码，并检查它们是否是在主线程被调用的。因为这两个方法在 UIKit 的 setter （包括 image 属性）中广泛使用，所以它可以捕获到很多线程相关的错误。虽然这个小技巧并不包含任何私有 API， 但我们还是不建议将它是用在发布产品中，不过在开发过程中使用的话还是相当赞的。
+现在没有官方的用来寻找类似错误的工具，但我们确实有一些技巧来避免这个问题。[UIKit Main Thread Guard](https://gist.github.com/steipete/5664345) 是一段用来监视每一次对 setNeedsLayout 和 setNeedsDisplay 的调用代码，并检查它们是否是在主线程被调用的。因为这两个方法在 UIKit 的 setter （包括 image 属性）中广泛使用，所以它可以捕获到很多线程相关的错误。虽然这个小技巧并不包含任何私有 API， 但我们还是不建议将它是用在发布产品中，不过在开发过程中使用的话还是相当赞的。另外最新xcode已经提供了[UIKit, APPKit主线程渲染的检查](https://developer.apple.com/documentation/code_diagnostics/main_thread_checker)
 
 Apple没有把 UIKit 设计为线程安全的类是有意为之的，将其打造为线程安全的话会使很多操作变慢。而事实上 UIKit 是和主线程绑定的，这一特点使得编写并发程序以及使用 UIKit 十分容易的，你唯一需要确保的就是对于 UIKit 的调用总是在主线程中来进行。
 
