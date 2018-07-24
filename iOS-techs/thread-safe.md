@@ -258,7 +258,41 @@ libobjc 里用的是 Mach 内核的 thread_switch() 然后传递了一个 mach t
 
 最终的结论就是，除非开发者能保证访问锁的线程全部都处于同一优先级，否则 iOS 系统中所有类型的自旋锁都不能再使用了。
 
-## barrier
+## barrier(栅栏)
+
+```Objc
+void dispatch_barrier_async(dispatch_queue_t queue, dispatch_block_t block);
+void dispatch_barrier_sync(dispatch_queue_t queue, dispatch_block_t block);
+```
+
+在队列中，barrier块必须单独执行，不能与其他块并行。这对于并发队列很有意义，因为串行队列都是串行执行。并发队列如果发现接下来要处理的快是barrier block，那么就一会要等当前所有并发块都执行完毕，才会单独执行这个barrier block。等待barrier block执行过后，再按正常方式继续向下处理。  
+
+```
+_syncQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+
+- (NSString *)someString {
+  __block NSString *localString;
+  dispatch_async(_syncQueue, ^{
+    localString = _someString;
+  });
+  return localString;
+}
+
+- (void)setSomeString:(NSString *)string {
+  dispatch_barrier_async(_syncQueue, ^{
+    _someString = string;
+  });
+}
+
+```
+
+![img](./imgs/barrier.png)
+
+从图上可以清晰看出barrier 的作用
+
+
+
+
 
 
 
