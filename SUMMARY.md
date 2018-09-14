@@ -4,6 +4,7 @@
 * [Tech for iOS](iOS-techs/readme.md)
   * [iOS线程安全](iOS-techs/thread-safe.md)
   * [iOS模块化](iOS-techs/modules.md)
+  * [iOS启动优化](iOS-techs/app-open.md)
 * [react-native](react-native/readme.md)
   * [概览](react-native/starter.md)
 * [iOS网络](network/README.md)
